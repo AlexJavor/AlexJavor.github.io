@@ -1,0 +1,140 @@
+<?php
+
+if (!isset ($_GET["action"])) {
+	die("requ&ecirc;te non autoris&eacute;e");
+}
+
+require "modele.php";
+
+// récupération des données passées en GET
+$action = $_GET['action'];
+
+// traitement selon l'action
+switch ($action) {
+    case "lister":
+        lister();
+        break;
+    case "creer":
+        creer();
+        break;
+    case "modifier":
+        modifier();
+        break;
+	case "supprimer":
+	    supprimer();
+	    break;
+}
+
+// fonctions
+function lister(){
+	$titre = "Liste de scores";
+	// récupération des enregistrements 
+	$result = recupereTous();
+	// création code HTML
+	$corps = "<ul>"; 
+	while($r = $result->fetch_assoc()) {
+	   	$corps .= "<li>";
+		$corps .= $r['id'].", ".$r['valeur'];
+		// liens 
+		$corps .= " - <a href=\"controleur.php?action=modifier&id=".$r['id']."\">Modifier</a>";
+		$corps .= " | <a href=\"controleur.php?action=supprimer&id=".$r['id']."\">Supprimer</a>";
+		$corps .= "</li>";
+	}
+	$corps .= "</ul>"; 
+	// lien pour création de score
+	$corps .= "<a href=\"controleur.php?action=creer\">Cr&eacute;er</a>";
+	// lien pour création de compte
+	$corps .= "<br><a href=\"../utilisateur/controleur.php?action=creer\">S'enregistrer</a>";
+	// affichage de la vue
+	require "vue.php"; 
+}
+function creer(){
+	$mode = "creation";
+	// affichage du formulaire
+	if ( !isset ($_POST['valeur']) ) {
+		// pas de données => affichage
+		$donnees = null;
+		$erreurs = null;
+		afficherFormulaire($mode, $donnees, $erreurs);
+	} else {
+		// données => test
+		$erreurs = testDonnees($_POST);
+		if ($erreurs == null){
+			// ajout
+			ajouteEnregistrement($_POST);
+			// redirection (sinon l'url demeurera action=creer)
+			header ('Location:controleur.php?action=lister');
+		} else {
+			afficherFormulaire($mode, $_POST, $erreurs);
+		}
+	}
+}
+function supprimer(){
+	if ( !isset ($_GET["id"]) ) {
+		// pas de données 
+		die("requ&ecirc;te non autoris&eacute;e");
+	}
+	supprimeEnregistrement($_GET["id"]);
+	lister();
+}
+function modifier(){
+	if ( !isset ($_GET["id"]) && !isset ($_POST["id"])) {
+		// pas de données 
+		die("requ&ecirc;te non autoris&eacute;e");
+	}
+	$mode = "modification";
+	// affichage du formulaire
+	if ( !isset ($_POST["valeur"]) ) {
+		// pas de données en POST (mais en GET) => affichage avec les données de l'enregistrement
+		$donnees = recupereEnregistrementParId($_GET["id"]);
+		$donnees['id'] = $_GET["id"];
+		$erreurs = null;
+		afficherFormulaire($mode, $donnees, $erreurs);
+	} else {
+		// données en POST => test
+		$erreurs = testDonnees($_POST);
+		if ($erreurs == null){
+			// ajout
+			modifieEnregistrement($_POST["id"], $_POST);
+			lister();
+		} else {
+			afficherFormulaire($mode, $_POST, $erreurs);
+		}
+	}
+}
+function afficherFormulaire($mode, $donnees, $erreurs){
+	if($mode == "creation"){
+		$titre = "Création";
+		$action = "creer";
+	} else	if($mode == "modification"){
+		$titre = "Modification";
+		$action = "modifier";
+	}
+	// création code HTML
+	$valeur = $donnees['valeur'];
+	$id = $donnees['id'];
+	$erreurValeur = $erreurs['valeur'];
+	$corps = <<<EOT
+<form id="creation-form" name="creation-form" method="post" action="controleur.php?action=$action">
+<label for="valeur">Score</label>
+<input id="valeur" type="text" name="valeur" value="$valeur" required aria-required="true" />
+<p class="erreur">$erreurValeur</p>
+<br><br>
+<button name='submit' type='submit' id='submit'>Valider</button>
+<input type='hidden' name='id' value='$id'/>
+</form>
+EOT;
+	// affichage de la vue
+	require "vue.php"; 	
+}
+
+function testDonnees($donnees){
+	$erreurs = array();
+	// test si le score est une valeur numérique
+	if (!is_numeric($donnees['valeur'])) {
+		$erreurs['valeur'] = "la valeur entrée doit être un nombre";
+	}
+	return $erreurs;
+}
+
+?>

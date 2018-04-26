@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Formulaire</title>
+  </head>
+<body>
+
+<p>Save a new score:</p>
+<form id="creation-form" name="creation-form" method="post" action="cree.php">
+
+  <label for="score">Score:</label>
+  <input id="score" type="text" name="score" value="" required aria-required="true"/>
+
+  <br><br>
+  <button name="sumbit" type="sumbit" id="sumbit">Valider</button>
+
+</form>
+
+</body>
+</html>

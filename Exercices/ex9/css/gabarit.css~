@@ -1,0 +1,51 @@
+#bandeau {
+    width: 100%;
+    heigth: 40px;
+    background-color:#0B0B3B;
+    margin: 10px 0px 20px;
+    padding: 20px 0px 20px 10px;
+    color: white;
+    font-size: 35px;
+    text-align: center;
+    font-weight: bold;
+    font-family:"Arial Black", Gadget, sans-serif ;
+}
+#auth {
+    color: black;
+    font-size: 17px;
+    font-weight: bold;
+    padding: 10px 0px 10px 5px;
+    background-color:lightblue;
+    font-family:"Arial" ;
+}
+#menu {
+    width: 100%;
+    heigth: 40px;
+    margin: 10px 0px 0px;
+    padding: 10px 0px 0px 10px;
+    color: black;
+    font-size: 23px;
+    font-weight: bold;
+    background-color:lightblue;
+    text-decoration: underline;
+}
+a {
+    color: red;
+    text-decoration:none;
+    font-style: italic;
+}
+#corps {
+    min-heigth: 400px;
+    font-size: 16px;
+    padding: 10px 5px 10px 5px;
+    background-color:lightblue;
+    font-family:"Courier New", Courier, monospace;
+}
+
+footer{
+    width: 100%;
+    background-color:#0B0B3B;
+    color: white;
+    font-size: 14px;
+    padding: 5px 0px 5px 10px;
+}
